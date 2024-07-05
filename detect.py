@@ -275,7 +275,7 @@ def run(
 
                         # Save or discard based on key press
                         #if key == 13:  # Enter key
-                            save_one_box(xyxy, imc, file=save_dir / "crops" / names[c] / f"{p.stem}_{i}.jpg", BGR=True)
+                        #save_one_box(xyxy, imc, file=save_dir / "crops" / names[c] / f"{p.stem}_{i}.jpg", BGR=True)
                         #elif key == 32:  # Spacebar
                         #    print("Image discarded")
 
