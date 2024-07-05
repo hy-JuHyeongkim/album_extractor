@@ -67,6 +67,30 @@ from utils.general import (
 )
 from utils.torch_utils import select_device, smart_inference_mode
 
+from IPython.display import display, Image
+from google.colab.patches import cv2_imshow
+
+def save_or_skip_image(img, save_path):
+    # 이미지를 Colab 노트북에 표시
+    _, im_buf_arr = cv2.imencode('.jpg', img)
+    img_display = Image(data=im_buf_arr.tobytes())
+    display(img_display)
+    
+    # 사용자 입력 대기
+    print("Enter 's' to save the image, 'n' to skip:")
+    while True:
+        key = input()
+        if key == 's':
+            # 이미지 저장
+            cv2.imwrite(save_path, img)
+            print(f"Image saved as {save_path}")
+            break
+        elif key == 'n':
+            # 이미지 건너뜀
+            print("Image skipped")
+            break
+        else:
+            print("Invalid input. Please enter 's' to save or 'n' to skip:")
 
 @smart_inference_mode()
 def run(
@@ -239,22 +263,24 @@ def run(
                         new_w, new_h = int(w * scale), int(h * scale)
                         resized_crop_img = cv2.resize(crop_img, (new_w, new_h))
 
+                        save_path =    save_path = save_dir / "crops" / names[c] / f"{p.stem}_{i}.jpg"
+                        save_or_skip_image(resized_crop_img, save_path)
                         # Create a named window and resize it to fit the resized image
-                        cv2.namedWindow('Cropped Image', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
-                        cv2.resizeWindow('Cropped Image', new_w, new_h)
+                        #cv2.namedWindow('Cropped Image', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
+                        #cv2.resizeWindow('Cropped Image', new_w, new_h)
 
                         # Show the resized cropped image
-                        cv2.imshow('Cropped Image', resized_crop_img)
-                        key = cv2.waitKey(0)
+                        #cv2.imshow('Cropped Image', resized_crop_img)
+                        #key = cv2.waitKey(0)
 
                         # Save or discard based on key press
-                        if key == 13:  # Enter key
+                        #if key == 13:  # Enter key
                             save_one_box(xyxy, imc, file=save_dir / "crops" / names[c] / f"{p.stem}_{i}.jpg", BGR=True)
-                        elif key == 32:  # Spacebar
-                            print("Image discarded")
+                        #elif key == 32:  # Spacebar
+                        #    print("Image discarded")
 
                         # Destroy the window after displaying the image
-                        cv2.destroyWindow('Cropped Image')
+                        #cv2.destroyWindow('Cropped Image')
 
             # Stream results
             im0 = annotator.result()
